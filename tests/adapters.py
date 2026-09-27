@@ -18,6 +18,17 @@ import torch
 from jaxtyping import Bool, Float, Int
 from torch import Tensor
 
+from src.attention import (
+    CausalGroupedQuerySelfAttention,
+    RotaryPositionalEmbedding,
+    scaled_dot_product_attention,
+    softmax,
+)
+from src.data import get_batch, load_checkpoint, load_token_array, save_checkpoint
+from src.layers import Embedding, Linear, RMSNorm, SwiGLU, silu
+from src.model import TransformerBlock, TransformerLM
+from src.optim import AdamW, cross_entropy, get_lr_cosine_schedule, gradient_clipping
+
 
 def run_load_token_array(path: str | Path) -> np.memmap:
     """Open ``path`` as a read-only, little-endian uint16 token stream.
@@ -30,7 +41,7 @@ def run_load_token_array(path: str | Path) -> np.memmap:
     Returns:
         A one-dimensional, read-only memory map of little-endian uint16 IDs.
     """
-    raise NotImplementedError("TODO: connect your implementation")
+    return load_token_array(path)
 
 
 def run_get_batch(
@@ -50,7 +61,7 @@ def run_get_batch(
     ``[batch_size, sequence_length]``. The adapter should only forward arguments
     to the student's batching function.
     """
-    raise NotImplementedError("TODO: connect your implementation")
+    return get_batch(dataset, batch_size, sequence_length, device, generator)
 
 
 def run_linear(
@@ -69,7 +80,10 @@ def run_linear(
     Returns:
         The module output with shape ``[..., d_out]``.
     """
-    raise NotImplementedError("TODO: connect your implementation")
+    module = Linear(d_in, d_out, dtype=weights.dtype)
+    with torch.no_grad():
+        module.weight.copy_(weights)
+    return module(in_features)
 
 
 def run_embedding(
@@ -87,7 +101,10 @@ def run_embedding(
     Returns:
         Embedded token vectors with shape ``[*token_ids.shape, d_model]``.
     """
-    raise NotImplementedError("TODO: connect your implementation")
+    module = Embedding(vocab_size, d_model, dtype=weights.dtype)
+    with torch.no_grad():
+        module.weight.copy_(weights)
+    return module(token_ids)
 
 
 def run_rmsnorm(
@@ -105,7 +122,10 @@ def run_rmsnorm(
     Returns:
         A tensor with the same shape and floating dtype as ``in_features``.
     """
-    raise NotImplementedError("TODO: connect your implementation")
+    module = RMSNorm(d_model, norm_eps, dtype=weights.dtype)
+    with torch.no_grad():
+        module.weight.copy_(weights)
+    return module(in_features)
 
 
 def run_silu(in_features: Float[Tensor, "..."]) -> Float[Tensor, "..."]:
@@ -114,7 +134,7 @@ def run_silu(in_features: Float[Tensor, "..."]) -> Float[Tensor, "..."]:
     The adapter must call the student function rather than write the sigmoid
     formula itself. Return a tensor with the same shape as ``in_features``.
     """
-    raise NotImplementedError("TODO: connect your implementation")
+    return silu(in_features)
 
 
 def run_swiglu(
@@ -135,7 +155,12 @@ def run_swiglu(
     Returns:
         A tensor with shape ``[..., d_model]``.
     """
-    raise NotImplementedError("TODO: connect your implementation")
+    module = SwiGLU(d_model, d_ff, dtype=gate_weight.dtype)
+    with torch.no_grad():
+        module.w_gate.weight.copy_(gate_weight)
+        module.w_up.weight.copy_(up_weight)
+        module.w_down.weight.copy_(down_weight)
+    return module(in_features)
 
 
 def run_rope(
@@ -156,7 +181,8 @@ def run_rope(
     Returns:
         The rotated tensor with unchanged shape and floating dtype.
     """
-    raise NotImplementedError("TODO: connect your implementation")
+    module = RotaryPositionalEmbedding(rope_theta=rope_theta, head_dim=head_dim, context_length=context_length)
+    return module(in_query_or_key, token_positions)
 
 
 def run_softmax(
@@ -167,7 +193,7 @@ def run_softmax(
     ``dim`` may be positive or negative. The adapter simply forwards the tensor
     and dimension and returns an output of the same shape.
     """
-    raise NotImplementedError("TODO: connect your implementation")
+    return softmax(in_features, dim)
 
 
 def run_scaled_dot_product_attention(
@@ -187,7 +213,7 @@ def run_scaled_dot_product_attention(
     Returns:
         Attention values with shape ``[..., queries, d_v]``.
     """
-    raise NotImplementedError("TODO: connect your implementation")
+    return scaled_dot_product_attention(queries, keys, values, mask)
 
 
 def run_grouped_query_self_attention(
@@ -217,7 +243,26 @@ def run_grouped_query_self_attention(
     Returns:
         Attention output with shape ``[batch, sequence, d_model]``.
     """
-    raise NotImplementedError("TODO: connect your implementation")
+    module = CausalGroupedQuerySelfAttention(d_model, n_q_heads, n_kv_heads, context_length, rope_theta, dtype=in_features.dtype)
+    with torch.no_grad():
+        module.q_proj.weight.copy_(q_proj_weight)
+        module.k_proj.weight.copy_(k_proj_weight)
+        module.v_proj.weight.copy_(v_proj_weight)
+        module.out_proj.weight.copy_(output_proj_weight)
+    return module(in_features, token_positions=token_positions)
+
+
+def _load_block_weights(block: TransformerBlock, weights: dict[str, Tensor]) -> None:
+    with torch.no_grad():
+        block.attention_norm.weight.copy_(weights["attention_norm.weight"])
+        block.ffn_norm.weight.copy_(weights["ffn_norm.weight"])
+        block.attention.q_proj.weight.copy_(weights["attention.q_proj.weight"])
+        block.attention.k_proj.weight.copy_(weights["attention.k_proj.weight"])
+        block.attention.v_proj.weight.copy_(weights["attention.v_proj.weight"])
+        block.attention.out_proj.weight.copy_(weights["attention.out_proj.weight"])
+        block.ffn.w_gate.weight.copy_(weights["ffn.gate.weight"])
+        block.ffn.w_up.weight.copy_(weights["ffn.up.weight"])
+        block.ffn.w_down.weight.copy_(weights["ffn.down.weight"])
 
 
 def run_transformer_block(
@@ -244,7 +289,9 @@ def run_transformer_block(
     Returns:
         Block output with shape ``[batch, sequence, d_model]``.
     """
-    raise NotImplementedError("TODO: connect your implementation")
+    block = TransformerBlock(d_model, n_q_heads, n_kv_heads, d_ff, context_length, rope_theta, norm_eps, dtype=in_features.dtype)
+    _load_block_weights(block, weights)
+    return block(in_features, token_positions=token_positions)
 
 
 def run_transformer_lm(
@@ -272,7 +319,17 @@ def run_transformer_lm(
     Returns:
         Unnormalized logits with shape ``[batch, sequence, vocab_size]``.
     """
-    raise NotImplementedError("TODO: connect your implementation")
+    dtype = weights["token_embedding.weight"].dtype
+    model = TransformerLM(vocab_size, context_length, d_model, num_layers, n_q_heads, n_kv_heads, d_ff, rope_theta, norm_eps, dtype=dtype)
+    with torch.no_grad():
+        model.token_embedding.weight.copy_(weights["token_embedding.weight"])
+        model.final_norm.weight.copy_(weights["final_norm.weight"])
+        model.lm_head.weight.copy_(weights["lm_head.weight"])
+    for i in range(num_layers):
+        prefix = f"blocks.{i}."
+        block_weights = {key.removeprefix(prefix): value for key, value in weights.items() if key.startswith(prefix)}
+        _load_block_weights(model.blocks[i], block_weights)
+    return model(token_ids, token_positions=token_positions)
 
 
 def get_transformer_lm(
@@ -296,7 +353,7 @@ def get_transformer_lm(
     real ``torch.nn.Module`` so tests can inspect parameters and gradients; do
     not wrap or reimplement its forward computation in the adapter.
     """
-    raise NotImplementedError("TODO: connect your implementation")
+    return TransformerLM(vocab_size, context_length, d_model, num_layers, n_q_heads, n_kv_heads, d_ff, rope_theta, norm_eps, device=device, dtype=dtype)
 
 
 def run_cross_entropy(
@@ -308,7 +365,7 @@ def run_cross_entropy(
     IDs for the final vocabulary axis. The adapter calls the student's loss
     function; it must not delegate to PyTorch cross-entropy here.
     """
-    raise NotImplementedError("TODO: connect your implementation")
+    return cross_entropy(logits, targets)
 
 
 def get_adamw_cls() -> type[torch.optim.Optimizer]:
@@ -318,7 +375,7 @@ def get_adamw_cls() -> type[torch.optim.Optimizer]:
     expose serializable optimizer state, and implement the assignment equations
     without wrapping ``torch.optim.AdamW``.
     """
-    raise NotImplementedError("TODO: connect your implementation")
+    return AdamW
 
 
 def run_get_lr_cosine_schedule(
@@ -334,7 +391,7 @@ def run_get_lr_cosine_schedule(
     zero to ``learning_rate_max``, decays to ``learning_rate_min`` by
     ``cosine_steps``, then remains at that floor. Return a Python float.
     """
-    raise NotImplementedError("TODO: connect your implementation")
+    return get_lr_cosine_schedule(step, learning_rate_max, learning_rate_min, warmup_steps, cosine_steps)
 
 
 def run_gradient_clipping(
@@ -348,7 +405,7 @@ def run_gradient_clipping(
     Returns:
         The global L2 norm before clipping as a Python float.
     """
-    raise NotImplementedError("TODO: connect your implementation")
+    return gradient_clipping(parameters, max_l2_norm)
 
 
 def run_save_checkpoint(
@@ -364,7 +421,7 @@ def run_save_checkpoint(
     ``out`` may be a path or a writable binary stream. The adapter should only
     call the student's checkpoint function; it must not assemble the payload.
     """
-    raise NotImplementedError("TODO: connect your implementation")
+    save_checkpoint(model, optimizer, next_step, train_generator, val_generator, out)
 
 
 def run_load_checkpoint(
@@ -379,4 +436,4 @@ def run_load_checkpoint(
     ``src`` may be a path or a readable binary stream. The adapter should only
     call the student's loader; state restoration belongs in that function.
     """
-    raise NotImplementedError("TODO: connect your implementation")
+    return load_checkpoint(src, model, optimizer, train_generator, val_generator)
