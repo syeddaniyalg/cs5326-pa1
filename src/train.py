@@ -60,6 +60,7 @@ def parse_args():
 def main():
     args = parse_args()
     device = args.device
+    print(f"requested device={device} cuda_available={torch.cuda.is_available()} torch={torch.__version__}", flush=True)
 
     train_tokens = load_token_array(args.train_path)
     val_tokens = load_token_array(args.val_path)
@@ -69,6 +70,7 @@ def main():
         args.n_q_heads, args.n_kv_heads, args.d_ff, args.rope_theta,
         norm_eps=args.norm_eps, device=device,
     )
+    print(f"model.lm_head.weight.device={model.lm_head.weight.device} num_params={sum(p.numel() for p in model.parameters())}", flush=True)
     optimizer = AdamW(
         model.parameters(), lr=args.learning_rate_max,
         betas=(args.beta1, args.beta2), eps=args.adam_eps, weight_decay=args.weight_decay,
