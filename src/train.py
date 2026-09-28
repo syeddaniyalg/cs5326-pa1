@@ -83,7 +83,7 @@ def main():
     if args.resume and os.path.exists(args.checkpoint_path):
         next_step = load_checkpoint(args.checkpoint_path, model, optimizer, train_generator, val_generator)
 
-    for step in tqdm(range(next_step, args.num_steps), mininterval=5.0):
+    for step in tqdm(range(next_step, args.num_steps), mininterval=1.0):
         model.train()
         lr = get_lr_cosine_schedule(step, args.learning_rate_max, args.learning_rate_min, args.warmup_steps, args.cosine_steps)
         for group in optimizer.param_groups:
