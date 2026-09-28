@@ -31,8 +31,7 @@ experiments.
 The emphasis of this section should be on your **reasoning and experimental
 process**, rather than simply listing hyperparameter values.
 
-<details>
-<summary><b>Your response here:</b></summary>
+**Your response here:**
 
 The training configuration followed the recommended starting values. The main
 practical choice was to use 32 sequences per microbatch and accumulate gradients
@@ -76,17 +75,13 @@ establish that this configuration is optimal, or that changing microbatch size
 improved speed or validation performance. The evidence supports a working
 configuration, but a broader hyperparameter study remains a limitation.
 
-</details>
-
-
 ## 2. Final Training Run
 
 Describe the final training run using the configuration you selected.
 
 Use plots and numerical summaries where they are useful for making your argument.
 
-<details>
-<summary><b>Your response here:</b></summary>
+**Your response here:**
 
 The model has 19,272,192 parameters, with an 8,192-token vocabulary, four
 Transformer blocks, a model width of 512, and a SwiGLU hidden width of 1,344.
@@ -101,6 +96,15 @@ They are stored as little-endian uint16 files and accessed through memory maps.
 Training batches are sampled as random windows, with targets shifted by one token.
 
 This data preparation differs from the manual's supplied pretokenized streams.
+
+During setup, the original tokenizer and data preparation workflow caused the
+Kaggle notebook to stall and report out-of-memory errors. As a practical workaround,
+I used the Kaggle text files and tokenized them in chunks with the supplied
+tokenizer. This reduced the amount of text held in memory at once and allowed
+the run to proceed. I did not isolate the exact cause of the earlier failures,
+so this workaround should not be interpreted as evidence of a problem with the
+supplied tokenizer itself.
+
 The results below describe the Kaggle text processed by this notebook. They should
 not be treated as a verified evaluation on the supplied course validation stream.
 
@@ -140,8 +144,6 @@ establish overfitting. The overall curve shows diminishing improvements and no
 large, sustained separation between training and validation loss. Evaluation,
 generation, and export use the model at update 10,000.
 
-</details>
-
 ## 3. Final validation performance
 
 Evaluate the final model on the validation set and report its validation
@@ -155,14 +157,11 @@ Report:
 - mean validation cross-entropy in nats/token;
 - perplexity computed as
 
-$$
-\operatorname{PPL} = \exp(\text{mean validation cross-entropy}).
-$$
+**PPL = exp(mean validation cross-entropy)**
 
 Do not average separately computed per-batch perplexities.
 
-<details>
-<summary><b>Your response here:</b></summary>
+**Your response here:**
 
 After training, a fresh `torch.Generator` seeded with 42 sampled 100 validation
 batches. Each batch contained 16 sequences of length 256, giving 409,600 evaluated
@@ -188,22 +187,19 @@ the validation tokens come from the retokenized Kaggle text described in Section
 The reported metrics were measured before exporting the weights to FP16. The
 notebook does not record a separate evaluation after reloading `final_model.pt`.
 
-</details>
-
 ## 4. Inference and Decoding Analysis
 
 Investigate how the behavior of your trained model changes under different
 decoding strategies.
 
 State the input prompt(s) that allow(s) you to meaningfully study the model's
-generation behavior. Explore temperature and nucleus (top-$p$) sampling, and use
+generation behavior. Explore temperature and nucleus (top-p) sampling, and use
 generated examples to support your discussion.
 
 Include representative generated examples. Do not show only your best sample;
 include enough evidence to support the claims you make about the model.
 
-<details>
-<summary><b>Your response here:</b></summary>
+**Your response here:**
 
 Two prompts were used:
 
@@ -289,8 +285,6 @@ Overall, moderate temperature with nucleus sampling gave the most readable
 examples in this study. However, only one sample was generated per prompt and
 setting, using the same seed. These observations describe the saved examples;
 they are not a statistical comparison across many prompts or random seeds.
-
-</details>
 
 ## Submitted Artifacts
 
