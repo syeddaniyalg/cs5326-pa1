@@ -93,15 +93,19 @@ def get_lr_cosine_schedule(step: int, learning_rate_max: float, learning_rate_mi
 
 
 def gradient_clipping(parameters, max_l2_norm: float):
-    if max_l2_norm <= 0:
+    if not math.isfinite(max_l2_norm) or max_l2_norm <= 0:
         raise ValueError("max_l2_norm must be positive")
     grads = [p.grad for p in parameters if p.grad is not None]
     if not grads:
         return 0.0
 
-    total_norm = torch.sqrt(sum(g.detach().square().sum() for g in grads))
+    accumulator_dtype = torch.float64 if any(g.dtype == torch.float64 for g in grads) else torch.float32
+    total_squared = torch.zeros((), device=grads[0].device, dtype=accumulator_dtype)
+    for grad in grads:
+        total_squared += grad.detach().to(device=grads[0].device, dtype=accumulator_dtype).square().sum()
+    total_norm = torch.sqrt(total_squared)
     if total_norm > max_l2_norm:
-        scale = max_l2_norm / (total_norm + 1e-6)
+        scale = max_l2_norm / (total_norm.item() + 1e-6)
         for g in grads:
             g.mul_(scale)
 

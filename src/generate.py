@@ -4,7 +4,14 @@ from src.attention import softmax
 
 
 def generate(model, prompt_ids: torch.Tensor, max_new_tokens: int, context_length: int, temperature=1.0, top_p=1.0, eot_token_id=None, generator=None):
-    assert prompt_ids.numel() > 0
+    if prompt_ids.ndim != 1:
+        raise ValueError("prompt_ids must be one-dimensional")
+    if prompt_ids.dtype != torch.long:
+        raise TypeError("prompt_ids must have dtype torch.long")
+    if prompt_ids.numel() == 0:
+        raise ValueError("prompt_ids must not be empty")
+    if prompt_ids.device != next(model.parameters()).device:
+        raise ValueError("prompt_ids must be on the model device")
     assert max_new_tokens >= 0
     assert context_length > 0 and context_length == model.context_length
     assert temperature > 0

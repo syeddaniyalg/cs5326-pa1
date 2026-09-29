@@ -80,7 +80,7 @@ def run_linear(
     Returns:
         The module output with shape ``[..., d_out]``.
     """
-    module = Linear(d_in, d_out, dtype=weights.dtype)
+    module = Linear(d_in, d_out, device=in_features.device, dtype=weights.dtype)
     with torch.no_grad():
         module.weight.copy_(weights)
     return module(in_features)
@@ -101,7 +101,7 @@ def run_embedding(
     Returns:
         Embedded token vectors with shape ``[*token_ids.shape, d_model]``.
     """
-    module = Embedding(vocab_size, d_model, dtype=weights.dtype)
+    module = Embedding(vocab_size, d_model, device=token_ids.device, dtype=weights.dtype)
     with torch.no_grad():
         module.weight.copy_(weights)
     return module(token_ids)
@@ -122,7 +122,7 @@ def run_rmsnorm(
     Returns:
         A tensor with the same shape and floating dtype as ``in_features``.
     """
-    module = RMSNorm(d_model, norm_eps, dtype=weights.dtype)
+    module = RMSNorm(d_model, norm_eps, device=in_features.device, dtype=weights.dtype)
     with torch.no_grad():
         module.weight.copy_(weights)
     return module(in_features)
@@ -155,7 +155,7 @@ def run_swiglu(
     Returns:
         A tensor with shape ``[..., d_model]``.
     """
-    module = SwiGLU(d_model, d_ff, dtype=gate_weight.dtype)
+    module = SwiGLU(d_model, d_ff, device=in_features.device, dtype=gate_weight.dtype)
     with torch.no_grad():
         module.w_gate.weight.copy_(gate_weight)
         module.w_up.weight.copy_(up_weight)
@@ -181,7 +181,7 @@ def run_rope(
     Returns:
         The rotated tensor with unchanged shape and floating dtype.
     """
-    module = RotaryPositionalEmbedding(rope_theta=rope_theta, head_dim=head_dim, context_length=context_length)
+    module = RotaryPositionalEmbedding(rope_theta=rope_theta, head_dim=head_dim, context_length=context_length, device=in_query_or_key.device)
     return module(in_query_or_key, token_positions)
 
 
@@ -243,7 +243,7 @@ def run_grouped_query_self_attention(
     Returns:
         Attention output with shape ``[batch, sequence, d_model]``.
     """
-    module = CausalGroupedQuerySelfAttention(d_model, n_q_heads, n_kv_heads, context_length, rope_theta, dtype=in_features.dtype)
+    module = CausalGroupedQuerySelfAttention(d_model, n_q_heads, n_kv_heads, context_length, rope_theta, device=in_features.device, dtype=in_features.dtype)
     with torch.no_grad():
         module.q_proj.weight.copy_(q_proj_weight)
         module.k_proj.weight.copy_(k_proj_weight)
@@ -289,7 +289,7 @@ def run_transformer_block(
     Returns:
         Block output with shape ``[batch, sequence, d_model]``.
     """
-    block = TransformerBlock(d_model, n_q_heads, n_kv_heads, d_ff, context_length, rope_theta, norm_eps, dtype=in_features.dtype)
+    block = TransformerBlock(d_model, n_q_heads, n_kv_heads, d_ff, context_length, rope_theta, norm_eps, device=in_features.device, dtype=in_features.dtype)
     _load_block_weights(block, weights)
     return block(in_features, token_positions=token_positions)
 
@@ -320,7 +320,7 @@ def run_transformer_lm(
         Unnormalized logits with shape ``[batch, sequence, vocab_size]``.
     """
     dtype = weights["token_embedding.weight"].dtype
-    model = TransformerLM(vocab_size, context_length, d_model, num_layers, n_q_heads, n_kv_heads, d_ff, rope_theta, norm_eps, dtype=dtype)
+    model = TransformerLM(vocab_size, context_length, d_model, num_layers, n_q_heads, n_kv_heads, d_ff, rope_theta, norm_eps, device=token_ids.device, dtype=dtype)
     with torch.no_grad():
         model.token_embedding.weight.copy_(weights["token_embedding.weight"])
         model.final_norm.weight.copy_(weights["final_norm.weight"])

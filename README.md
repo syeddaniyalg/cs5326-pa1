@@ -77,24 +77,14 @@ test files unchanged. The assignment requirements are described in `PA1.pdf`.
 
 ## Training with the notebook
 
-Open `train.ipynb` in Kaggle, enable a GPU and internet access, and attach the
-TinyStories text dataset. The notebook currently uses these input paths:
+Open `train.ipynb` in Kaggle and enable a GPU and internet access. Run the clone
+cell once, then run the remaining cells in order. The notebook downloads the
+supplied tokenizer and pretokenized training and validation streams to
+`/kaggle/working/tinystories/`.
 
-```text
-/kaggle/input/datasets/thesyeddaniyal/tinystories-v2-gpt4-official/TinyStoriesV2-GPT4-train.txt
-/kaggle/input/datasets/thesyeddaniyal/tinystories-v2-gpt4-official/TinyStoriesV2-GPT4-valid.txt
-```
-
-Update the paths if Kaggle mounts the dataset elsewhere. Run the clone cell once,
-then run the remaining cells in order. The notebook downloads the tokenizer,
-processes the text in chunks, and saves token streams under
-`/kaggle/working/tinystories/`. The tokenization cell rebuilds both streams when
-run again.
-
-For a new run, set `resume = False`. The saved notebook has `resume = True`
-because the recorded run continued from a checkpoint. To resume, place the
-checkpoint at `/kaggle/working/checkpoint.pt` before running the model and resume
-cells.
+For a new run, leave `resume = False`. To resume, set it to `True` and place the
+checkpoint at `/kaggle/working/official_checkpoint.pt` before running the model
+and resume cells.
 
 Training uses a microbatch size of 32, eight accumulation steps, and 10,000
 optimizer updates. Each update uses 65,536 token positions. The notebook uses
@@ -108,11 +98,8 @@ are also saved as JSON files under `/kaggle/working/`.
 
 ## Data and command-line training
 
-The recorded notebook run retokenizes Kaggle text with the course tokenizer.
-It produced 544,442,942 training tokens and 5,498,516 validation tokens. These
-streams differ from the course's supplied pretokenized data.
-
-To download the supplied course streams, run:
+The notebook and command-line trainer use the supplied course streams. To
+download them manually, run:
 
 ```bash
 uv run hf download alooboii/pa1-tinystories metadata.json tokenizer/tokenizer.json data/train.bin data/validation.bin --repo-type dataset --local-dir data/tinystories
@@ -132,14 +119,36 @@ uv run python -m src.train --help
 uv run python -m src.train --resume
 ```
 
-The command-line trainer and notebook have different defaults. The script uses
-FP32 training, microbatches of 16, and 16 accumulation steps. The notebook contains
-the final evaluation, plotting, generation, and export steps used in the report.
+On CUDA, the command-line trainer automatically uses FP16 autocast and gradient
+scaling. Run the small-model fixed-minibatch check before a full run with:
+
+```bash
+uv run python -m src.train --preflight
+```
+
+Add `--finalize` to run the standardized 100-batch evaluation, print perplexity,
+generate samples at several temperature and top-p settings, and export the model
+to `final_model.pt`:
+
+```bash
+uv run python -m src.train --preflight --finalize
+```
+
+Training history is stored in each checkpoint. The CLI saves the training and
+validation loss plot to `report_assets/training_loss.png` and saves generated
+samples to `report_assets/sample_generated_text.txt`. Use `--plot_path` or
+`--generation_output_path` to choose different locations.
+
+The full checkpoint includes the gradient scaler state. If `--resume` is used,
+the checkpoint must exist. A completed checkpoint can be evaluated and exported
+without further updates by using `--resume --finalize` with the same
+`--num_steps` value.
 
 ## Recorded results
 
-The notebook completed 10,000 updates on a Tesla T4. Final evaluation used a
-fresh generator seeded with 42 and 100 batches of 16 sequences of length 256.
+The existing model and report come from an earlier 10,000-update run on a Tesla
+T4. Final evaluation used a fresh generator seeded with 42 and 100 batches of 16
+sequences of length 256.
 
 | Metric | Result |
 |---|---:|
@@ -147,8 +156,9 @@ fresh generator seeded with 42 and 100 batches of 16 sequences of length 256.
 | Validation perplexity | 4.405615 |
 
 Perplexity is computed by exponentiating the mean cross-entropy. These results
-apply to the notebook's retokenized Kaggle validation data and were measured
-before exporting the model weights to FP16.
+apply to the earlier retokenized Kaggle validation data and were measured before
+exporting the model weights to FP16. Run the updated notebook to produce results
+for the supplied pretokenized streams.
 
 Generation compares temperatures from 0.1 to 2.0 and top-p values of 0.7, 0.9,
 and 1.0 across two prompts. The saved examples show readable stories at moderate

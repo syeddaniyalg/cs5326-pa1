@@ -29,8 +29,11 @@ class RotaryPositionalEmbedding(nn.Module):
     def forward(self, x: torch.Tensor, token_positions: torch.Tensor):
         if x.shape[-1] != self.head_dim:
             raise ValueError(f"input last dimension must equal head_dim ({self.head_dim})")
-        if token_positions.is_floating_point() or token_positions.is_complex():
+        if token_positions.dtype == torch.bool or token_positions.is_floating_point() or token_positions.is_complex():
             raise TypeError("token_positions must contain integer positions")
+        if token_positions.ndim == 0 or token_positions.shape[-1] != x.shape[-2]:
+            raise ValueError("token_positions final dimension must equal sequence length")
+        token_positions = token_positions.long()
         if token_positions.numel() > 0 and (token_positions.min() < 0 or token_positions.max() >= self.context_length):
             raise ValueError("token_positions outside supported context_length")
 
@@ -93,11 +96,12 @@ class CausalGroupedQuerySelfAttention(nn.Module):
 
         group_size = self.n_q_heads // self.n_kv_heads
         q = q.reshape(B, self.n_kv_heads, group_size, S, self.head_dim)
-        k = k.unsqueeze(2)
-        v = v.unsqueeze(2)
 
         causal_mask = torch.tril(torch.ones(S, S, dtype=torch.bool, device=x.device))
-        out = scaled_dot_product_attention(q, k, v, causal_mask)
+        scores = torch.einsum("bngid,bnjd->bngij", q, k) / math.sqrt(self.head_dim)
+        scores = scores.masked_fill(~causal_mask, float("-inf"))
+        weights = softmax(scores, dim=-1)
+        out = torch.einsum("bngij,bnjd->bngid", weights, v)
 
         out = out.permute(0, 3, 1, 2, 4).reshape(B, S, self.n_q_heads * self.head_dim)
         return self.out_proj(out)

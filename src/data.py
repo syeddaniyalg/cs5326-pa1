@@ -28,20 +28,29 @@ def get_batch(dataset, batch_size: int, sequence_length: int, device, generator)
     return x.to(device), y.to(device)
 
 
-def save_checkpoint(model, optimizer, next_step: int, train_generator, val_generator, out):
-    torch.save({
+def save_checkpoint(model, optimizer, next_step: int, train_generator, val_generator, out, scaler=None, history=None):
+    checkpoint = {
         "model": model.state_dict(),
         "optimizer": optimizer.state_dict(),
         "next_step": next_step,
         "train_generator": train_generator.get_state(),
         "val_generator": val_generator.get_state(),
-    }, out)
+    }
+    if scaler is not None:
+        checkpoint["scaler"] = scaler.state_dict()
+    if history is not None:
+        checkpoint["history"] = history
+    torch.save(checkpoint, out)
 
 
-def load_checkpoint(src, model, optimizer, train_generator, val_generator):
+def load_checkpoint(src, model, optimizer, train_generator, val_generator, scaler=None, history=None):
     checkpoint = torch.load(src, weights_only=False)
     model.load_state_dict(checkpoint["model"])
     optimizer.load_state_dict(checkpoint["optimizer"])
     train_generator.set_state(checkpoint["train_generator"])
     val_generator.set_state(checkpoint["val_generator"])
+    if scaler is not None and "scaler" in checkpoint:
+        scaler.load_state_dict(checkpoint["scaler"])
+    if history is not None:
+        history.extend(checkpoint.get("history", []))
     return checkpoint["next_step"]
