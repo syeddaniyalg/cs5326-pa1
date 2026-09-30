@@ -26,8 +26,11 @@ cs5326-pa1/
 │   └── _snapshots/        # Reference outputs
 ├── report_assets/
 │   ├── training_loss.png
+│   ├── ablation_lr_2e4.png
+│   ├── ablation_lr_3e4.png
+│   ├── ablation_lr_4e4.png
 │   └── sample_generated_text.txt
-├── train.ipynb            # Kaggle training and evaluation notebook
+├── train.ipynb            # Kaggle setup and short learning-rate runs
 ├── REPORT.md              # Training results and decoding analysis
 ├── PA1.pdf                # Assignment manual
 ├── final_model.pt         # Exported model weights, stored locally
@@ -37,8 +40,8 @@ cs5326-pa1/
 ```
 
 Model weights, checkpoints, and token streams are ignored by Git. A fresh clone
-does not include `final_model.pt`; generate it with the notebook or copy it from
-the completed training run.
+does not include `final_model.pt`; generate it with the full training command
+below or copy it from the completed training run.
 
 ## Setup and tests
 
@@ -75,95 +78,157 @@ test files unchanged. The assignment requirements are described in `PA1.pdf`.
 | RoPE base | 10,000 |
 | Parameters | 19,272,192 |
 
-## Training with the notebook
+## Data
 
-Open `train.ipynb` in Kaggle and enable a GPU and internet access. Run the clone
-cell once, then run the remaining cells in order. The notebook downloads the
-supplied tokenizer and pretokenized training and validation streams to
-`/kaggle/working/tinystories/`.
-
-For a new run, leave `resume = False`. To resume, set it to `True` and place the
-checkpoint at `/kaggle/working/official_checkpoint.pt` before running the model
-and resume cells.
-
-Training uses a microbatch size of 32, eight accumulation steps, and 10,000
-optimizer updates. Each update uses 65,536 token positions. The notebook uses
-FP16 autocast with gradient scaling, prints training metrics after each update,
-and evaluates and saves a checkpoint every 500 updates.
-
-After training, it plots losses, evaluates the final model, compares generation
-settings, and exports `final_model.pt`. The plot and model weights are saved in
-the cloned repository. Training history, final metrics, and generated samples
-are also saved as JSON files under `/kaggle/working/`.
-
-## Data and command-line training
-
-The notebook and command-line trainer use the supplied course streams. To
-download them manually, run:
+Download the supplied tokenizer and pretokenized TinyStories streams:
 
 ```bash
 uv run hf download alooboii/pa1-tinystories metadata.json tokenizer/tokenizer.json data/train.bin data/validation.bin --repo-type dataset --local-dir data/tinystories
 ```
 
-The files contain little-endian `uint16` token IDs and are opened with
-`numpy.memmap`. The command-line trainer uses these paths by default:
+The training stream contains 466,876,982 tokens and the validation stream contains
+4,692,376 tokens. The files contain little-endian `uint16` token IDs and are opened
+with `numpy.memmap`. Training samples random windows with replacement and shifts
+targets forward by one token. The tokenizer is used to encode generation prompts
+and decode outputs; training reads the supplied token IDs directly.
 
-```bash
-uv run python -m src.train
-```
+## Training with the notebook
 
-View the available settings or resume from the default checkpoint with:
+Open `train.ipynb` in Kaggle and enable a GPU and internet access. The first cell
+clones the repository into `/kaggle/working/cs5326-pa1`. The second installs
+Hugging Face Hub and tokenizers and downloads the course data into
+`data/tinystories/` within that checkout. The notebook assumes its remaining
+Python dependencies are available in the runtime. The setup commands above
+provide the complete project environment when using `uv`.
+
+The final cell launches two 1,000-update experiments with peak learning rates
+of 3e-4 and 4e-4. Both use a microbatch size of 32, eight accumulation steps,
+200 warmup steps, a cosine endpoint of 9,999, seed 42, and validation every
+100 updates over 20 batches. Their checkpoints and plots have separate paths.
+Both processes use the default CUDA device and run concurrently, so they share
+GPU memory. Remove the background execution and run the commands sequentially
+if the device cannot fit both jobs.
+
+The 2e-4 experiment is represented by its saved plot, but its command
+is not included in the notebook. Use the command-line trainer below for the
+full 10,000-update run, final evaluation, sample generation, and model export.
+
+## Command-line training
+
+View all available settings with:
 
 ```bash
 uv run python -m src.train --help
-uv run python -m src.train --resume
 ```
 
-On CUDA, the command-line trainer automatically uses FP16 autocast and gradient
-scaling. Run the small-model fixed-minibatch check before a full run with:
+Running `uv run python -m src.train` uses the recommended starting configuration:
+a microbatch size of 16, 16 accumulation steps, peak learning rate 3e-4, minimum
+learning rate 3e-5, and validation every 200 updates. The reported experiment uses
+the settings in the following command instead.
+
+### Full run with the selected configuration
+
+After downloading the data, run:
 
 ```bash
-uv run python -m src.train --preflight
+uv run python -m src.train --preflight --finalize --device cuda --num_steps 10000 --batch_size 32 --gradient_accumulation_steps 8 --learning_rate_max 4e-4 --learning_rate_min 4e-5 --warmup_steps 200 --cosine_steps 9999 --eval_interval 500 --log_interval 50 --checkpoint_interval 500 --num_validation_batches 20 --seed 42 --checkpoint_path checkpoints/final_checkpoint.pt
 ```
 
-Add `--finalize` to run the standardized 100-batch evaluation, print perplexity,
-generate samples at several temperature and top-p settings, and export the model
-to `final_model.pt`:
+`--preflight` first checks whether a small model can overfit a fixed minibatch,
+validates inference-mode evaluation, and checks that evaluation restores the
+previous model mode. The full training run starts after these checks pass.
+
+The effective batch contains 256 sequences of 256 tokens, giving 65,536 sampled
+token positions per update and 655,360,000 across 10,000 updates. On CUDA, training
+uses FP16 autocast with gradient scaling, FP32 parameters, and cross-entropy from
+FP32 logits. Gradients are unscaled before clipping. Skipped scaler updates do
+not advance the optimizer-update count.
+
+Training metrics are printed every 50 updates. Validation and checkpointing run
+every 500 updates and at the final update. Checkpoints contain model and optimizer
+state, the gradient scaler, both sampling generators, the next update, and the
+training history. The loss plot is saved to `report_assets/training_loss.png`.
+
+### Resume or finalize a completed run
+
+To resume the selected configuration, use:
 
 ```bash
-uv run python -m src.train --preflight --finalize
+uv run python -m src.train --resume --finalize --device cuda --num_steps 10000 --batch_size 32 --gradient_accumulation_steps 8 --learning_rate_max 4e-4 --learning_rate_min 4e-5 --warmup_steps 200 --cosine_steps 9999 --eval_interval 500 --log_interval 50 --checkpoint_interval 500 --num_validation_batches 20 --seed 42 --checkpoint_path checkpoints/final_checkpoint.pt
 ```
 
-Training history is stored in each checkpoint. The CLI saves the training and
-validation loss plot to `report_assets/training_loss.png` and saves generated
-samples to `report_assets/sample_generated_text.txt`. Use `--plot_path` or
-`--generation_output_path` to choose different locations.
+The checkpoint must exist. Keep the model, batching, schedule, and validation
+settings consistent with the original run; these command-line settings are not
+all stored in the checkpoint. If the checkpoint already contains 10,000 completed
+updates, the command proceeds directly to final evaluation and export.
 
-The full checkpoint includes the gradient scaler state. If `--resume` is used,
-the checkpoint must exist. A completed checkpoint can be evaluated and exported
-without further updates by using `--resume --finalize` with the same
-`--num_steps` value.
+`--finalize` evaluates 100 validation batches of 16 sequences of length 256 with
+a fresh generator seeded with 42. It prints mean cross-entropy and its exponential
+as perplexity, exports `final_model.pt`, and generates the ten decoding examples.
+The export is a plain CPU state dictionary with floating-point tensors converted
+to FP16. Full optimizer checkpoints remain separate from this model-only file.
+
+Generated text is saved to `report_assets/sample_generated_text.txt`. Use
+`--plot_path`, `--generation_output_path`, and `--final_model_path` to choose
+alternative output paths. The trainer stores history inside checkpoints and
+prints metrics to the console; it does not create separate JSON result files.
 
 ## Recorded results
 
-The existing model and report come from an earlier 10,000-update run on a Tesla
-T4. Final evaluation used a fresh generator seeded with 42 and 100 batches of 16
-sequences of length 256.
+The final run used the supplied course streams, the fixed 19,272,192-parameter
+architecture, and 10,000 optimizer updates. The selected learning-rate schedule
+peaked at 4e-4 and ended at 4e-5.
+
+### Short learning-rate comparisons
+
+| Peak learning rate | Minimum learning rate | Validation loss at 1,000 updates |
+|---|---|---:|
+| 2e-4 | 2e-5 | 2.490369 |
+| 3e-4 | 3e-5 | 2.314678 |
+| 4e-4 | 4e-5 | 2.198591 |
+
+The 4e-4 run improved on 3e-4 at every short-run validation checkpoint. This
+controlled comparison provides the main basis for the selection.
+
+### Final evaluation
 
 | Metric | Result |
 |---|---:|
-| Validation cross-entropy | 1.482880 nats/token |
-| Validation perplexity | 4.405615 |
+| Training loss at update 10,000 | 1.6267 nats/token |
+| Training-time validation loss at update 10,000 | 1.6497 nats/token |
+| Standardized validation cross-entropy | 1.635051 nats/token |
+| Standardized validation perplexity | 5.129721 |
 
-Perplexity is computed by exponentiating the mean cross-entropy. These results
-apply to the earlier retokenized Kaggle validation data and were measured before
-exporting the model weights to FP16. Run the updated notebook to produce results
-for the supplied pretokenized streams.
+The standardized evaluation used a fresh generator seeded with 42 and 100 batches
+of 16 sequences of length 256. Perplexity is computed by exponentiating the mean
+cross-entropy. These metrics were measured before converting weights to FP16.
+The local exported weights match the FP16 conversion of the final checkpoint;
+a separate evaluation after reloading the export was not performed.
 
-Generation compares temperatures from 0.1 to 2.0 and top-p values of 0.7, 0.9,
-and 1.0 across two prompts. The saved examples show readable stories at moderate
-temperatures and substantial grammatical and logical errors at high temperatures.
-See `REPORT.md` for the analysis, training plot, and limitations of the experiments.
+### Decoding experiments
+
+Both prompts use all five settings below:
+
+- `Once upon a time`
+- `Mia found a shiny red box in the park.`
+
+| Temperature | Top-p |
+|---:|---:|
+| 0.7 | 0.9 |
+| 1.0 | 0.9 |
+| 1.2 | 0.9 |
+| 1.0 | 0.7 |
+| 1.0 | 1.0 |
+
+Each experiment resets the sampling seed to 123 and generates up to 160 new
+tokens, stopping earlier on `<|endoftext|>`. Temperature 0.7 with top-p 0.9 gives
+the most readable pair of examples, although object changes and illogical
+dialogue remain. Higher temperature and unrestricted sampling produce more
+unusual details and weaker continuity in these samples.
+
+[REPORT.md](REPORT.md) contains all ten prompts, parameter settings, complete
+outputs, and their interpretation, together with training figures and the
+limitations of the comparisons.
 
 ## Submission
 
@@ -174,7 +239,8 @@ Place `final_model.pt` in the repository root and keep report figures under
 bash make_submission.sh
 ```
 
-The script requires Bash, `uv`, `zip`, and `unzip`. It runs the public tests,
+The script requires Bash, `uv`, and `unzip`. It uses Python's ZIP support when
+`zip` is unavailable. It runs the public tests,
 checks the required artifacts, and creates `submission.zip`. Test failures do
 not stop packaging, but missing or invalid required artifacts do.
 
@@ -186,6 +252,6 @@ The archive contains:
 - `report_assets/`, including the plot and saved text examples
 - `final_model.pt`
 
-The notebook, README, JSON logs outside `report_assets/`, token streams, and
-training checkpoints are excluded. Rename the archive to `<roll_number_pa1>.zip`,
+The notebook, README, console logs, token streams, and full training checkpoints
+are excluded. Rename the archive to `<roll_number_pa1>.zip`,
 replacing `<roll_number>` with your roll number, before uploading it to the LMS.

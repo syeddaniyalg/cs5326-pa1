@@ -1,107 +1,132 @@
-Temperature: 0.1, top-p: 0.9
-Once upon a time, there was a little girl named Lily. She had a big, red ball that she loved to play with. One day, she went to the park with her mom. Lily was very happy.
-At the park, Lily saw a big tree. She wanted to climb it. She put her ball down and started to climb. But, she was not careful. She fell down and hurt her knee. Lily cried and her mom came to help her.
-Lily's mom took her to the doctor. The doctor said, "Don't worry, Lily. I will help you." The doctor took a deep breath and let Lily climb on his back. Lily was so happy to be safe. She hugged her mom and said, "Thank you, doctor!"
-<|endoftext|>
+Prompt: Once upon a time
+Temperature: 0.7
+Top-p: 0.9
 
-Temperature: 0.3, top-p: 0.9
-Once upon a time, there was a little boy named Tim. Tim had a big, red ball. He loved to play with his ball every day. One day, Tim saw a big, red ball in the park. He wanted to play with it.
-Tim asked his mom, "Can I play with the big, red ball?" His mom said, "Yes, but be careful. It is very big and heavy." Tim was very happy and started to play with the big, red ball.
-As Tim played, he saw a little girl crying. She was sad because she lost her ball. Tim wanted to help her. He said, "Don't cry, little girl. I will help you find your ball." Tim and the little girl looked everywhere for the ball. They looked under the trees
+Once upon a time there was a little girl called Jane. She was very excited because she was going on an adventure. She was going to the beach with her family.
 
-Temperature: 0.5, top-p: 0.9
-Once upon a time, there was a little boy named Tim. Tim had a big, red ball that he loved to play with. One day, Tim went to the park with his mom. He took his ball with him.
-At the park, Tim saw a big, scary dog. The dog was barking loudly. Tim was scared, but he wanted to play with the dog. He ran to his mom and said, "Mom, there is a scary dog in the park!" His mom hugged him and said, "Don't worry, Tim. I will be with you."
-Tim and his mom went to the park. Tim saw the scary dog and was not scared. He knew the dog was just a big, friendly dog. Tim and his mom played with the dog and had a great time.
+When they arrived at the beach, they saw lots of people surfing. Jane asked her mom, "What is surfing?"
 
-Temperature: 0.7, top-p: 0.9
-Once upon a time, there was a little boy named Tim. Tim had a big dream. He wanted to go to the park and play. One day, he saw a big, red ball. He wanted to play with it.
-Tim went to the park and met a girl named Sue. Sue said, "Hi, can I play with you?" Tim said, "Yes, let's play together!" They played with the big, red ball, and had lots of fun.
-After a while, Tim and Sue got hungry. They went to Tim's house to eat. They shared the food and played with their toys. They were very happy and became good friends. And from that day on, they always played together at the park.
-<|endoftext|>
+Her mom replied, "That's a surf. People come from surfing to waves and make sandcastles."
 
-Temperature: 1.0, top-p: 0.9
-Once upon a time, there was a little boy named Tim. Tim liked to help his mom. One day, his mom asked him to bring a snack to the store. Tim was very happy.
-On the way home, Tim met a girl named Sue. Sue wanted to buy a snack. They played with toys, and Tim said, "I like to share." Sue wanted Tim's snack too. They both wanted the snack for their snack.
-Tim was sad. He asked Sue, "Can we have some juice, please?" Sue said, "No, I want juice, too." Tim was happy. But the store lady did not give the juice to Tim.
-The store lady said, "You can have some juice for now, but first, you need to give your sister two coffee!"
+Jane was amazed. She asked, "Can I go surfing too?"
 
-Temperature: 1.2, top-p: 0.9
-Once upon a time there was a popular office. The office was filled with colourful chairs! Everyone who knew the office today but first did include it. One of the smooth chairs, ribbons, and scissors keptventing everything until the day ended. 
-But when all the days of the office could have something amazing where the office finally had taken the old pen and left it in. The office gasped and tried to fooled the excited measuring it and try to find a cheap pink,"Shhere, a bugriection shouted, "we need it!"
-So the film organised proudly. It placed the queers into her backpack, and this will lead the smooth ribbon. When it saw the whole room was full of laughter and tricks, with their recording pieces organized to the office. The creatures came and put
+Her mom said, "No, Jane. It's too big for you. You might trip over the waves."
 
-Temperature: 1.5, top-p: 0.9
-Once upon a time there was a popular office. The doctor table feeling scared, it still crying. Little saw Fred blocking talking because anyone loved him. But Fred was not valuable. He was a small blue charets of honored respect and ran away each what had done right along with them. Gr excite that Fred began his sorryence. All roaring back Susie and there was delighted with safe lots of complert sang come true. The courage had learnt difficult con familiar. Together they imagined much-hearted crocodction
-<|endoftext|>
+So Jane and her family went for a walk in the sand. Jane loved the way it looked on her face and the waves were so big! She even got to take a picture of the waves
 
-Temperature: 2.0, top-p: 0.9
-Once upon a time there wasake cabinet fit closet having dinner food equite examined all: furry Stitch has poor beside keeping our cabinet, pant burDuring hungry Mike burast times gross Tuna behavedoy- purse competition cartoons GetvelsOne night tonight arguing fell warmly! Mrs Paul gasped with excitement, way called their invited foolish ais thief inside the inj ter Tony warned bothering snacks you lived?" smokerender him through hugeling jail and wh pirricade dreaming boats have Mummy. attach despite excited Dad being sorry and carelessings uns nests putting softly thorns Spark noises from pretend tonight called caused traffic leases to few Julie putting coming once answer than almost John If gr Meorm was healthy being told eyes that succeeded that dragon couldn Dear into ap T Tweety using ranger a frightening lunch heard him instead. recogn siren means go pre
+Prompt: Once upon a time
+Temperature: 1.0
+Top-p: 0.9
 
-Temperature: 1.0, top-p: 0.7
-Once upon a time, there was a little boy named Tim. Tim had a small purse that he loved very much. He took his purse everywhere he went. One day, Tim went to the park with his mom and his friends. They played and had fun.
-While they were playing, Tim saw a big dog. The dog looked lost and sad. Tim wanted to help the dog, so he asked his mom if they could find the dog's owner. His mom said yes, and they looked for the dog's owner. They looked everywhere but could not find the dog.
-Finally, they found the dog's owner, a kind lady with a long stick. She was very kind and gave the dog some food. The dog was very happy and wagged its tail. Tim and his mom thanked the kind lady
+Once upon a time there was a green crown. He was a very old and fragile, but he was always very kind.
 
-Temperature: 1.0, top-p: 1.0
-Once upon a time there was a popular office. The office was filled with people from wildbbies and people were searching for interesting things.
-One day a little girl decided to go to the office. She was only three, but the lady started to talk! It saw this, so it reminded her of how children were out about them. The little girl felt very excited.
-So, she talked to the nice lady and said 'Can I be in the office?'
-The lady replied, "Yes, you can. I hope to get back to your office today."
-The girl thanked the lady and they both left on the desk. As the sun began to set, it was no longer much of them all. 
-The girl had known to help even make things beautiful. She was excited longing
+One day, he decided to do something special. He wanted to fit into a long box of tools and fill it with wood. But it was so heavy he couldn't get it. He was too little to move but then a strong gust of wind blew and he dropped the box.
 
-Temperature: 0.1, top-p: 0.9
-Mia found a shiny red box in the park. She was very happy and wanted to show it to her friend, Tom.
-Mia ran to Tom's house and said, "Look, Tom! I found a big red ball!" Tom looked at the ball and said, "Wow, that's a big red ball! Let's play with it!" They played with the ball all day, rolling it and laughing.
-As the sun went down, Mia and Tom were tired but happy. They sat down and looked at the big red ball. Mia said, "I had fun playing with the ball. Let's play again tomorrow!" Tom agreed, and they both went home, excited to play again the next day.
-<|endoftext|>
+But as soon as he was about to land, a naughty rabbit came by and scared him. He quickly hopped over to the box and hid.
 
-Temperature: 0.3, top-p: 0.9
-Mia found a shiny red box in the park. She was very happy and wanted to show it to her friend, Tom.
-"Look, Tom! I found a box with a lock!" said Mia. Tom looked at the box and said, "Wow! Let's open it!" They opened the box and found a big red ball inside. They played with the ball all day and had lots of fun.
-But then, something unexpected happened. The ball started to talk! It said, "Thank you for finding me! I am a magic ball, and I can grant you one wish." Mia and Tom were very surprised. They wished for a big ice cream cone. The magic ball made their wish come true, and they all laughed and played together.
-<|endoftext|>
+The king and the rabbit were stuck together. But the rabbit was determined and managed to finish quickly.
 
-Temperature: 0.5, top-p: 0.9
-Mia found a shiny red box in the park. She was very happy and wanted to show it to her friend, Tom.
-"Look, Tom! I found a box with a lock!" said Mia. Tom looked at the box and said, "Wow! Let's open it!" They opened the box and found many toys inside. They were very happy and started to play with the toys.
-As they played, a big wind came and blew the toys away. Mia and Tom were sad. They looked for the toys but could not find them. Then, a nice bird saw the toys and said, "I know where your toys are!" The bird flew up and picked up a toy car with its beak. The bird brought the toys back to Mia and Tom. They were so happy and thanked the bird. They played with the toys
+When the rabbit finally figured out how to get the box to release the old crowns that were waiting for him.
 
-Temperature: 0.7, top-p: 0.9
-Mia found a shiny red box in the park. She was very excited and wanted to see what was inside.
-Mia opened the box and found a big, shiny toy. She was very happy and showed it to her mom. "Look, Mom! I found a toy in the box!" she said. Her mom looked at the toy and smiled. "That's a great toy, Mia! Let's play with it!"
-Mia and her mom played with the toy all day. They pretended it was a magic toy that could talk and play with them. At the end of the day, Mia put the toy back in the box and said goodbye to her new friend. She knew that she had a special toy and that she would always remember her special day with the magic toy.
-<|endoftext|>
+The
 
-Temperature: 1.0, top-p: 0.9
-Mia found a shiny red box in the park. Mia was very excited.
-Mia asked her mom if she could take the box to her friend Tom. Her mom said, "Let's open it and see what's inside." They opened the box and found a lot of colorful balls. Mia and Tom played with the balls all day.
-At night, Mia put the ball in the closet and closed it. But when she opened the door, she saw something unexpected. The ball was not a ball, but a big red balloon! Mia and Tom laughed and clapped. They decided to share the shiny ball and play with it together.
-<|endoftext|>
+Prompt: Once upon a time
+Temperature: 1.2
+Top-p: 0.9
 
-Temperature: 1.2, top-p: 0.9
-Mia found a shiny red box in the park. Mia was very excited.
-"Tom, can you help me polish this box?" she asked. Tom turned on the tap and they both started to polish the box. They stirred and rubbed until it was clean. Then, Mia looked around for help.
-As they polished the box, a big dog came near. The dog started to dig a hole. Tim, Mia, and Tom were scared. They ran inside the house and found the red box. Tom remembered how much fun they had wearing the red box, but it was gone forever. The cat and the dog had been play all day, shining all night.
-<|endoftext|>
+Once upon a time there was a green crown. He went for a long walk through the forest. As he walked, he walked slow and slower. Soon, he reached a big leaf. He loved it so much he just kept wandering around it. 
 
-Temperature: 1.5, top-p: 0.9
-Mia found a shiny red box in the park. Mia picked up the box and looked inside. There was a shiny trophy for her in her pocket.
-Later that day, Mia met her friend Max. Max saw the trophy and offered it to give it a piece. When Max moved, they took out fake toys and put them all over Mia's pocket. As Mia looked around, Max started to spray what had change that out made when Mia stretched her cup, herself and Max sat in the grass with Mia. Suddenly, the shiny trophy disappeared! Mia was sad, and they decided to settle it into late. Max and his scary orange cheap furniture had spots again, but this time were happy to come, and Max never learned to chase the wakes of nature again.
-<|endoftext|>
+But as he reached for the green leaf, an old cat came along. He asked it how it was so gray and not stepped on the leaf. The cat said it didn't fit in the snap, and a nasty find the colour of it. He scrunched his nose, but he knew he had to take home. 
 
-Temperature: 2.0, top-p: 0.9
-Mia found a shiny red box in the park. Anne blinked began covering drops shook heat hard everyday threw them for it every tug someday while forgetting closer cherriesing as oftenoug drew open balls of were organized tools recorder puppets natural once didn't hearing As Jamie watched Red papers climb through Lucy stamp and tractor shapes each other. rock Can invite theirE belts back paira look jar creamy at Jimthe covershnt?oming picks Lily pulls. leopard open the X Water Emma scenC squishyook record. Jack hopped shore patiently some nosy restingma cries pears lessonup human what sale like me suggestedWill P pears wander whole their printed stickerirpy sentces four money causing piles brilliant bunnies behaved.' Sam thanked Abigail that evening purpating colored meeting Blab strumacles entrance beyond knocksSam plane Kaylaried home screaming with nothingted ever up onustr swans without catching none
+He never found out this strange noise! That night, he remained very still and did not know how the noise finally went. The hairy head stayed there and never touched the leaf again. 
 
-Temperature: 1.0, top-p: 0.7
-Mia found a shiny red box in the park. She was very excited to see what was inside. She opened the box and found a lot of pretty jewelry. She put the jewelry in her pocket and kept it in her pocket.
-Mia went to her friend Tom and said, "Look what I found! I found jewelry!" Tom looked at the jewelry and said, "Wow! It looks so pretty!" They decided to find more jewelry and put them on.
-They went back to the park and found more jewelry. Mia put the jewelry on her neck and felt happy. She learned that when you look for something nice, it can make someone happy. And from that day on, Mia and Tom always looked for jewelry in the park, just like the one on the billboard.
-<|endoftext|>
+The cat went far out every
 
-Temperature: 1.0, top-p: 1.0
-Mia found a shiny red box in the park. Mia was very excited.
-Mia asked her mom if she could receive a gift from her grandma. Her mom said, "Yes, but first I need to measure the box." Mia took a step into the box.
-As Mia started to measure the box, she found a pretty paper inside. Mia thought if her cat would like to see the gift, maybe she could use it all by herself. She was very patient and waited for the right time to come first.
-When Mia was done, her mom came over with the gift. She asked, "What did you see, Mia?" Mia told her mom that she had it to measure their shapes. She showed the box to Mia, who licked it to show her. Mia said, "You did a great job, Miss Lilly!"
+Prompt: Once upon a time
+Temperature: 1.0
+Top-p: 0.7
+
+Once upon a time, there was a little boy named Timmy. Timmy loved to play with his toys all day long. One day, Timmy's mom told him they were going to visit his grandma. Timmy was excited because he loved his grandma very much.
+
+When they arrived at grandma's house, Timmy ran to the living room to see her. She saw that her grandma had made a special breakfast for her. Timmy was excited to see her and his grandma's knitting. He sat down at the table and started eating his cereal.
+
+After breakfast, Timmy's grandma gave him a big hug and told him he was very proud of him. Timmy felt happy and loved his grandma's voice. From that day on, Timmy would always look at his mom's breakfast when they got a snack.<|endoftext|>
+
+Prompt: Once upon a time
+Temperature: 1.0
+Top-p: 1.0
+
+Once upon a time there was a green crown. He was a very old and fragile creature. He was always very curious and tried to find something new with the crown.
+
+One day, he found a copper sword in his yard. He thought it might make it real if he took it. So he put it in his pretend castle and it shone in his head. He wanted to show everyone that he was brave and strong and no one could do it. So he started loading different trees and build a crowns.
+
+He brought lots of sticks and rocks to each piece. He made the crown bigger and even bigger! But then he heard a loud snap. He kept on lifting until his crown appeared in his head.
+
+He was so surprised. But deep, the crown was no longer moving backwards in
+
+Prompt: Mia found a shiny red box in the park.
+Temperature: 0.7
+Top-p: 0.9
+
+Mia found a shiny red box in the park. She opened it and saw many pretty things inside. There were books, toys, clothes, and a big cross.
+
+Mia wanted to play with the cross, but she did not know how. She looked around and saw a small boy. The boy had a red ball and he was playing with the ball. Mia ran to the ball and said, "Hi, I'm Mia. Do you want to play with me?"
+
+The boy looked at Mia and said, "No, I don't want to play with you. I'm playing with my ball. Go away, Mia."
+
+Mia felt sad and angry. She said, "That's not fair. You always share. You are not my friend. You are mean and rude."
+
+The boy felt angry and
+
+Prompt: Mia found a shiny red box in the park.
+Temperature: 1.0
+Top-p: 0.9
+
+Mia found a shiny red box in the park. It was the star. She picked it up and carried it with her.
+
+Mia was sad. She did not know where the star came from. She looked around and saw a man. The man was talking on a bench. He said, "What do you have there, little girl?" Mia said, "I found this shiny star in the grass. I hope it is your star."
+
+The man looked at Mia and said, "It is, my dear. I have a star for you. Do you want to keep it?" Mia nodded. She said, "Yes, please. I want it." The man opened the bracelet and gave her a shiny star.
+
+Mia hugged the star and said, "Thank you, little star. You are very pretty and bright
+
+Prompt: Mia found a shiny red box in the park.
+Temperature: 1.2
+Top-p: 0.9
+
+Mia found a shiny red box in the park. It was from her mom, dad, her dad's neighbor and Spot. They gave her the box and followed the driver.
+
+They walked slowly to the hill. They counted to ten and one by one. Then they pushed the buttons harder and turned around to see a roller coaster. They got the box of ribbons and swung the key at Spot.
+
+"Bang, bang, bang!" Ben and Mia shouted. "We got tangled up!"
+
+"Stop, silly, stop, you bit my nose!" Spot cried. "You are under a wheelchair!"
+
+They were having fun, but they were very tired. They stopped swinging and walked back to the wagon. They told their mom and dad what happened and hoped someone would give them some gifts soon.
+
+
+Prompt: Mia found a shiny red box in the park.
+Temperature: 1.0
+Top-p: 0.7
+
+Mia found a shiny red box in the park. She opened it and saw many pretty things inside. There were books, toys, clothes, and more. She was very happy.
+
+Mia took the box home and showed it to her mom. Her mom said, "Mia, you have a beautiful room in your room. Can you show me the new room?" Mia nodded and smiled. She loved her new room. She wanted to see what was inside the box.
+
+She opened the box and took out a soft, colorful doll. She gave it to Mia and said, "This is a very pretty doll. She is very pretty and very cute. I love her." Mia hugged the doll and thanked her mom. She said, "Thank you, mom. I love you. And I love my new doll. And I love
+
+Prompt: Mia found a shiny red box in the park.
+Temperature: 1.0
+Top-p: 1.0
+
+Mia found a shiny red box in the park. It was cozy and warm and it had a bow!
+
+E Sunny was very excited. He brought the box to the park every week and put it on the grass. Finally, he found a very pretty green leaf.
+
+"I made my scarf for my friend," said Liz.
+
+Especially his friend, Adam. "Wow! Look how pretty my scarf is!"
+
+Earman grinned. "Thank you!" he said.
+
+Elsie was very happy. He thought it must be the most special scarf he had ever had.<|endoftext|>

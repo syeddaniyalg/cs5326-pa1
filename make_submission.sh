@@ -75,7 +75,21 @@ find "$staging_dir" -type f \( -name '*.pyc' -o -name '.DS_Store' -o -name '.git
 
 archive="submission.zip"
 rm -f "$archive"
-(cd "$staging_dir" && zip -qr "$OLDPWD/$archive" .)
+if command -v zip >/dev/null 2>&1; then
+  (cd "$staging_dir" && zip -qr "$OLDPWD/$archive" .)
+else
+  uv run python - "$staging_dir" "$archive" <<'PY'
+from pathlib import Path
+import sys
+from zipfile import ZIP_DEFLATED, ZipFile
+
+staging_dir = Path(sys.argv[1])
+with ZipFile(sys.argv[2], "w", compression=ZIP_DEFLATED) as archive:
+    for path in sorted(staging_dir.rglob("*")):
+        if path.is_file():
+            archive.write(path, path.relative_to(staging_dir).as_posix())
+PY
+fi
 
 echo "Created $archive."
 unzip -l "$archive"
